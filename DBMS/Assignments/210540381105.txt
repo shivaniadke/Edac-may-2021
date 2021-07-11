@@ -1,0 +1,126 @@
+-- -------------------------Section I (30 marks)-------------------------------------------
+
+-- 1. Create table DEPT with the following structure:-
+
+create table DEPT
+(
+DEPTNO int,
+DNAME varchar(15),
+LOC varchar(10)
+);
+
+-- Insert the following rows into the DEPT table:-
+        
+INSERT INTO DEPT (DEPTNO,DNAME,LOC)VALUES
+(10,'ACCOUNTING','NAGPUR'),
+(20,'RESEARCH','DELHI'),
+(30,'SALES','KOLKATA'),
+(40,'OPERATIONS','MUMBAI');
+
+-- 2. Create table EMP with the following structure:-
+CREATE TABLE EMP
+(
+EMPNO int,
+ENAME varchar(10),
+JOB varchar(9),
+HIREDATE date,
+SAL float,
+COMM float,
+DEPTNO int
+);
+
+-- Insert the following rows into the EMP table:-
+INSERT INTO EMP(EMPNO,ENAME,JOB,HIREDATE,SAL,COMM,DEPTNO) VALUES
+(7839 ,'KRISHNA','MANAGER','1991-11-17' ,5000, NULL ,10),
+(7698 ,'BHAVANA','CLERK','1981-05-01' ,2850 ,NULL ,30),
+(7782 ,'CHETAN' ,'MANAGER','1981-06-09' ,2450 ,NULL ,10),
+(7566 ,'JAMILA' ,'CLERK','1981-04-02 ',2975,NULL ,20),
+(7654 ,'MAHENDRA','SALESMAN','1981-09-28' ,1250 ,1400 ,30),
+(7499 ,'AJIT','SALESMAN','1981-02-20',1600 ,300 ,30);
+
+SELECT * FROM DEPT;
+SELECT * FROM EMP;
+
+-- Write SELECT statements to achieve the following:-
+
+-- 3. Display the JOB column with duplicate values suppressed.
+SELECT distinct JOB FROM EMP;
+
+-- 4. Display the Enames and the corresponding Dnames.
+select ENAME,DNAME FROM EMP ,DEPT WHERE EMP.DEPTNO=DEPT.DEPTNO;
+
+-- 5. Show the salaries of all employees rounding it to the nearest 1000.
+SELECT ROUND((SAL)/1000)*1000 FROM EMP;
+
+-- 6. Find the names of all employees who do not receive any commission.
+SELECT ENAME FROM EMP WHERE COMM IS NULL;
+
+-- 7. Display the names of all employees right-aligning them to 15 characters.
+SELECT LPAD(ENAME ,15,'*') FROM EMP;
+
+-- 8. Display the remainder of 9 divided by 5.
+SELECT MOD(9,5) FROM DUAL;
+
+-- 9. Display the minimum SAL jobwise.
+SELECT JOB , MIN(SAL) FROM EMP GROUP BY JOB;
+
+-- 10. Display the DNAME and the corresponding ENAME. 
+All rows of DEPT table are to be displayed even if a particular DEPTNO has no employees
+select ENAME,DNAME FROM EMP RIGHT OUTER JOIN DEPT ON( EMP.DEPTNO=DEPT.DEPTNO);
+
+
+-- -------------------------------------Section II (10 marks)----------------------------------
+
+/*
+--1. Write a stored procedure by the name of Simp_intr to calculate the amount of 
+interest on a bank account. The formulae are:-
+Intr = p*t*r/100
+Amt = p + Intr
+where:-
+Intr is the total interest earned.
+p is the principal, 
+t is the number of years the money is earning interest, and
+r is the rate of interest.
+Your stored procedure should accept the values of p, t and r as parameters and insert
+the Interest and Total amount into a suitable TEMPP output table. Calling program 
+for the stored procedure need not be written.*/
+
+create table TEMPP
+(
+INTR FLOAT,
+AMT FLOAT
+);
+
+DELIMITER //
+CREATE PROCEDURE Simp_intr ( P FLOAT,T FLOAT, R FLOAT)
+BEGIN
+DECLARE INTR FLOAT;
+DECLARE AMT FLOAT;
+SET INTR =P*T*R/100;
+SET AMT = p + Intr;
+INSERT INTO TEMPP VALUES (INTR,AMT);
+END ; //
+DELIMITER;
+
+CALL Simp_intr(50000,3, 8.5);
+select intr as 'intrest',amt as 'Total Amount' from tempp;
+
+
+/*2. Write a stored function by the name of Days_between. 
+The stored function should accept ‘D1’ and ‘D2’ as date parameters. The stored function should 
+return the number of days between the two dates.
+ Calling program for the stored function need not be written*/
+
+DELIMITER //
+CREATE FUNCTION DAYS_BETWEEN(d1 DATE,D2 DATE)
+RETURNS int 
+DETERMINISTIC
+BEGIN
+RETURN datediff(D1,D2);
+END;//
+DELIMITER ;
+
+SET @DAYS = DAYS_BETWEEN('2020-01-31','2020-01-01');
+SELECT @DAYS FROM DUAL;
+
+
